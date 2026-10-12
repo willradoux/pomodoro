@@ -24,6 +24,12 @@ Timer Pomodoro minimalista com visual inspirado na Apple: vidro escuro, fundo em
 
 ![Painel de fundos](docs/backgrounds.jpg)
 
+## Prévia ao compartilhar
+
+As tags Open Graph e Twitter Card ficam no `index.html`, disponíveis mesmo para aplicativos que não executam JavaScript. A imagem está em `public/og-image.jpg` (1200 × 630), com o visual do timer e a fonte Manrope.
+
+Ao mudar de domínio, atualize o endereço canônico, `og:url`, `og:image` e `twitter:image` no HTML. Para recriar a arte, execute `python scripts/generate-social-preview.py` com Pillow e NumPy instalados. O script baixa a Manrope para a pasta temporária se necessário; a licença está em `public/fonts/Manrope-OFL.txt`. O build usa a imagem pronta e não depende de Python.
+
 ## Tecnologias
 
 - **React 18** + **TypeScript**, com **Vite** como bundler.
