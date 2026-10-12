@@ -50,6 +50,13 @@
   opacity: 1;
   transform: translate(-50%, 0);
 }
+/* alinhado à direita: para botões encostados na borda da tela */
+.tooltip-left {
+  left: auto;
+  right: 0;
+  transform: translate(0, 4px);
+}
+.tooltip-left[data-open] { transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .tooltip { transition: none; }

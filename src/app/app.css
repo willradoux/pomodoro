@@ -22,6 +22,16 @@
   gap: 8px;
 }
 
+/* link do repositório no canto inferior direito */
+.repo-link {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 5;
+  padding: 4px;
+  border-radius: 999px;
+}
+
 @media (max-height: 520px) {
   .app { padding-top: 12px; padding-bottom: 12px; }
   .stage { gap: 10px; }

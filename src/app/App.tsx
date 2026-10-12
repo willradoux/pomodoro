@@ -1,6 +1,10 @@
 import { BackgroundButton, BackgroundPanel, BlobBackdrop, GradientBackground, useBackground } from '../features/background'
 import { ModePicker, SessionControls, TimerFace, UndoToast, usePomodoro } from '../features/timer'
+import { GitHubIcon } from '../shared/ui/icons/GitHubIcon'
+import { IconLink } from '../shared/ui/IconLink'
 import './app.css'
+
+const REPO_URL = 'https://github.com/willradoux/pomodoro'
 
 export default function App() {
   const pomodoro = usePomodoro()
@@ -27,6 +31,10 @@ export default function App() {
           <BackgroundButton anchor={background.anchor} expanded={background.panelOpen} onOpen={background.openPanel} />
         </div>
       </section>
+
+      <IconLink href={REPO_URL} label="Código no GitHub" className="repo-link surface">
+        <GitHubIcon />
+      </IconLink>
 
       <UndoToast toast={pomodoro.toast} onUndo={pomodoro.undo} onDismiss={pomodoro.dismissToast} />
 
