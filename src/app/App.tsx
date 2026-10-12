@@ -21,9 +21,9 @@ export default function App() {
 
       <h1 className="sr-only">Pomodoro</h1>
 
-      <section className="stage">
+      <section className="stage" style={{ '--progress-color': background.progressColor } as CSSProperties}>
         <ModePicker value={pomodoro.state.mode} onChange={pomodoro.changeMode} />
-        <div className="card-wrap" style={{ '--progress-color': background.progressColor } as CSSProperties}>
+        <div className="card-wrap">
           <TimerFace ref={pomodoro.ring} state={pomodoro.state} onPrimary={pomodoro.primary} />
         </div>
         <div className="secondary-row">

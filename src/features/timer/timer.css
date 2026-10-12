@@ -20,7 +20,8 @@
   transition: color 0.2s var(--ease-out), background-color 0.2s var(--ease-out);
 }
 .segment:hover, .segment.is-active { color: var(--on); }
-.segment:not(.is-active):hover { background: var(--fill-1); }
+.segment.is-active { color: var(--surface); font-weight: 700; }
+.segment:not(.is-active):hover { background: var(--surface-raised); }
 .segment:focus-visible { outline-offset: -2px; }
 
 .segmented-thumb {
@@ -29,8 +30,8 @@
   left: 0;
   height: 36px;
   border-radius: 999px;
-  background: var(--fill-3);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1);
+  background: var(--progress-color, var(--on));
+  transition: background-color 0.4s var(--ease-out);
 }
 
 /* ---------- card ---------- */
@@ -201,5 +202,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .toast { animation: none; }
-  .digits, .segment { transition: none; }
+  .digits, .segment, .segmented-thumb { transition: none; }
 }

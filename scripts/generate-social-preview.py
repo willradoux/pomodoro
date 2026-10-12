@@ -92,8 +92,8 @@ ImageDraw.Draw(shadow).rounded_rectangle(box((240, 278, 960, 558)), radius=44 * 
 canvas = Image.alpha_composite(canvas, shadow.filter(ImageFilter.GaussianBlur(24 * SCALE)))
 draw = ImageDraw.Draw(canvas)
 draw.rounded_rectangle(box((421, 192, 779, 241)), radius=25 * SCALE, fill='#080808')
-draw.rounded_rectangle(box((426, 197, 516, 236)), radius=20 * SCALE, fill='#292929')
-centered('Foco', 471, 215, 17, 600, '#f5f5f7')
+draw.rounded_rectangle(box((426, 197, 516, 236)), radius=20 * SCALE, fill='#409cff')
+centered('Foco', 471, 215, 17, 700, '#080808')
 centered('Pausa', 579, 215, 17, 500, '#a1a1aa')
 centered('Pausa longa', 706, 215, 17, 500, '#a1a1aa')
 
