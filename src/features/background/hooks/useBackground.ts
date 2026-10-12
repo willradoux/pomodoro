@@ -1,4 +1,5 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback } from 'react'
+import { usePanel } from '../../../shared/hooks/usePanel'
 import { useStored } from '../../../shared/hooks/useStored'
 import { sounds } from '../../../shared/lib/sounds'
 import { backgroundById, DEFAULT_BACKGROUND, type BackgroundId, type BackgroundPrefs } from '../model/backgrounds'
@@ -7,9 +8,7 @@ import { playBackgroundSound } from '../sounds'
 /** Preferências do fundo (persistidas) e estado do painel de escolha. */
 export function useBackground() {
   const [prefs, setPrefs] = useStored<BackgroundPrefs>('pomodoro.background', DEFAULT_BACKGROUND)
-  const [panelOpen, setPanelOpen] = useState(false)
-  const openRef = useRef(false)
-  const anchor = useRef<HTMLDivElement>(null)
+  const panel = usePanel()
 
   const select = useCallback(
     (id: BackgroundId) => {
@@ -27,31 +26,16 @@ export function useBackground() {
     [setPrefs],
   )
 
-  // ref, não o estado: X, Esc e clique fora podem chamar fechar no mesmo ciclo — toca uma vez só
-  const openPanel = useCallback(() => {
-    if (openRef.current) return
-    openRef.current = true
-    sounds.open()
-    setPanelOpen(true)
-  }, [])
-
-  const closePanel = useCallback(() => {
-    if (!openRef.current) return
-    openRef.current = false
-    sounds.close()
-    setPanelOpen(false)
-  }, [])
-
   const selected = backgroundById(prefs.id)
 
   return {
     prefs,
     colors: selected.colors,
     progressColor: selected.progressColor,
-    panelOpen,
-    openPanel,
-    closePanel,
-    anchor,
+    panelOpen: panel.open,
+    openPanel: panel.openPanel,
+    closePanel: panel.closePanel,
+    anchor: panel.anchor,
     select,
     setAnimate,
   }

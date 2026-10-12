@@ -1,0 +1,80 @@
+/* painel flutuante ancorado a um botão (ver Popover.tsx) */
+
+.panel-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  visibility: hidden;
+}
+.panel-scrim[data-open] { visibility: visible; }
+
+.panel {
+  /* left/top definidos em JS, ao lado do botão */
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 21;
+  width: min(300px, calc(100vw - 32px));
+  padding: 16px;
+  border-radius: 24px;
+  box-shadow: var(--surface-highlight), 0 0 0 0.5px var(--surface-edge), var(--shadow-lg);
+  /* fechado: fora do foco e do leitor de tela */
+  visibility: hidden;
+  opacity: 0;
+  transform: translateX(-8px) scale(0.98);
+  transform-origin: left top;
+  transition: opacity 0.2s var(--ease-out), transform 0.25s var(--ease-out), visibility 0s linear 0.25s;
+}
+.panel[data-side='top'] {
+  transform: translateY(8px) scale(0.98);
+  transform-origin: bottom center;
+}
+.panel[data-open] {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.2s var(--ease-out), transform 0.25s var(--ease-out), visibility 0s;
+}
+.panel:focus { outline: none; }
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.panel-head h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+.panel-close {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--on-2);
+  transition: background-color 0.15s, color 0.15s;
+}
+.panel-close:hover { background: var(--fill-2); color: var(--on); }
+
+.panel-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.panel-note {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--on-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel, .panel[data-open] { transition: none; }
+}
