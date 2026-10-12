@@ -1,0 +1,28 @@
+.app {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+    max(24px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+}
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(14px, 3.2vh, 24px);
+  width: min(100%, 640px);
+}
+
+.secondary-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+@media (max-height: 520px) {
+  .app { padding-top: 12px; padding-bottom: 12px; }
+  .stage { gap: 10px; }
+}

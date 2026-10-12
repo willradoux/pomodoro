@@ -1,0 +1,208 @@
+/* ---------- seletor de modo ---------- */
+
+.segmented {
+  position: relative;
+  display: flex;
+  padding: 4px;
+  border-radius: 999px;
+}
+
+.segment {
+  position: relative;
+  z-index: 1;
+  height: 36px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--on-2);
+  transition: color 0.2s var(--ease-out), background-color 0.2s var(--ease-out);
+}
+.segment:hover, .segment.is-active { color: var(--on); }
+.segment:not(.is-active):hover { background: var(--fill-1); }
+.segment:focus-visible { outline-offset: -2px; }
+
+.segmented-thumb {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  height: 36px;
+  border-radius: 999px;
+  background: var(--fill-3);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1);
+}
+
+/* ---------- card ---------- */
+
+/* o card responde à largura disponível (container query), não à janela */
+.card-wrap {
+  width: 100%;
+  max-width: 460px;
+  container: card / inline-size;
+}
+
+.card {
+  --pad: clamp(12px, 3cqi, 16px);
+  /* bloco do play quadrado: define a altura do card */
+  --block: clamp(150px, 40cqi, 196px);
+  /* 2.74em (4 dígitos de 0.62em + ":") × 0.34 ≈ 93% da coluna do número */
+  --digits: clamp(48px, calc((100cqi - 2 * var(--pad) - var(--block)) * 0.34), 124px);
+  --ring: calc(var(--block) * 0.76);
+  --radius: 28px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--block);
+  border-radius: var(--radius);
+  box-shadow: var(--surface-highlight), 0 0 0 0.5px var(--surface-edge), var(--shadow-lg);
+}
+
+.card-info {
+  display: grid;
+  justify-items: center;
+  min-width: 0;
+  align-content: center;
+  padding: var(--pad);
+}
+
+/* ---------- tempo ---------- */
+
+.digits {
+  display: flex;
+  justify-content: center;
+  font-size: var(--digits);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  transition: opacity 0.3s var(--ease-out);
+}
+.card[data-status='paused'] .digits { opacity: 0.72; }
+.card[data-status='complete'] .digits { opacity: 0.5; }
+
+/* largura fixa por dígito: a Satoshi tem algarismos proporcionais */
+.digit {
+  position: relative;
+  display: inline-block;
+  width: 0.62em;
+  height: 1.1em;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
+}
+.digit > span {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.colon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 0.26em;
+  height: 1.1em;
+  padding-bottom: 0.08em; /* centro óptico do ":" */
+}
+
+/* ---------- área do play ---------- */
+
+.play-area {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: var(--block);
+  border-radius: var(--radius);
+  background: rgb(255 255 255 / 0.05);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.1),
+    -8px 0 24px -10px rgb(0 0 0 / 0.45);
+}
+
+/* celular em pé: número em cima, faixa do play embaixo */
+@container card (max-width: 419px) {
+  .card {
+    --block: clamp(88px, 26cqi, 108px);
+    --digits: clamp(56px, calc((100cqi - 2 * var(--pad)) * 0.31), 124px);
+    --ring: calc(var(--block) * 0.78);
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .card-info { padding: var(--pad) var(--pad) calc(var(--pad) * 0.6); }
+  .play-area {
+    height: var(--block);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1), 0 -8px 24px -10px rgb(0 0 0 / 0.45);
+  }
+}
+
+.ring {
+  width: var(--ring);
+  height: var(--ring);
+  pointer-events: none;
+}
+.ring svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transform: rotate(-90deg) scaleY(-1); /* começa no topo e esvazia no sentido horário */
+}
+.ring circle { fill: none; stroke-width: 3; }
+.ring-track { stroke: rgb(255 255 255 / 0.12); }
+.ring-arc { stroke: var(--on); stroke-linecap: round; }
+
+/* o botão cobre a área inteira: alvo de toque grande */
+.play-hit {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: inherit;
+  color: var(--on);
+  transition: background-color 0.15s;
+}
+.play-hit:hover { background: var(--fill-1); }
+.play-icon {
+  width: clamp(36px, calc(var(--ring) * 0.44), 64px);
+  height: clamp(36px, calc(var(--ring) * 0.44), 64px);
+}
+
+/* ---------- aviso com desfazer ---------- */
+
+.toast-region {
+  position: fixed;
+  left: 50%;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 10;
+}
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 6px 6px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  white-space: nowrap;
+  animation: toast-in 0.25s var(--ease-out);
+}
+.toast-action {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--fill-2);
+  font-weight: 600;
+  transition: background-color 0.15s;
+}
+.toast-action:hover { background: var(--fill-3); }
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+}
+
+/* telas baixas: bloco limitado pela altura que sobra */
+@media (max-height: 520px) {
+  .card { --block: clamp(120px, calc(100dvh - 150px), 196px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast { animation: none; }
+  .digits, .segment { transition: none; }
+}

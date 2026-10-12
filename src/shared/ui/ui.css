@@ -1,0 +1,56 @@
+/* agrupamento em pílula de vidro para botões de ícone */
+.secondary {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 999px;
+}
+
+.tip-anchor {
+  position: relative;
+  display: inline-flex;
+}
+
+.icon-button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: var(--on);
+  transition: background-color 0.15s, color 0.15s;
+}
+.icon-button:hover:not([aria-disabled]) { background: var(--fill-2); }
+.icon-button[aria-disabled] { color: var(--on-3); cursor: default; }
+
+.icon-motion {
+  display: grid;
+  place-items: center;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgb(28 28 32 / 0.94);
+  box-shadow: var(--shadow-sm);
+  color: var(--on);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, 4px);
+  transition: opacity 0.15s, transform 0.15s var(--ease-out);
+}
+.tooltip[data-open] {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tooltip { transition: none; }
+}
