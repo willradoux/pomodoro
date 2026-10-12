@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/fonts/manrope-latin-variable.woff2') format('woff2');
+}
+
 *,
 *::before,
 *::after { box-sizing: border-box; }
@@ -36,10 +44,8 @@ button {
   white-space: nowrap;
 }
 
-/* material único de vidro escuro */
+/* Superfícies opacas: o fundo não interfere na cor dos controles. */
 .surface {
   background: var(--surface);
-  -webkit-backdrop-filter: var(--surface-blur);
-  backdrop-filter: var(--surface-blur);
   box-shadow: var(--surface-highlight), 0 0 0 0.5px var(--surface-edge), var(--shadow-sm);
 }

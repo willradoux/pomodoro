@@ -7,7 +7,10 @@
   z-index: -1;
   overflow: hidden;
   pointer-events: none;
+  background: var(--bg-light);
+  transition: background-color 0.4s var(--ease-out);
 }
+.backdrop[data-animate='false'] .blob { animation-play-state: paused; }
 .blob {
   position: absolute;
   border-radius: 50%;
@@ -16,19 +19,22 @@
 .blob-1 {
   width: 70vmax; height: 70vmax;
   left: -12vmax; top: -10vmax;
-  background: radial-gradient(closest-side, rgb(0 113 227 / 0.28), transparent);
+  background: radial-gradient(closest-side, var(--bg-strong), transparent);
+  opacity: 0.5;
 }
 .blob-2 {
   width: 60vmax; height: 60vmax;
   right: -14vmax; top: 10vh;
-  background: radial-gradient(closest-side, rgb(90 200 250 / 0.3), transparent);
+  background: radial-gradient(closest-side, var(--bg-mid), transparent);
+  opacity: 0.7;
   animation-duration: 75s;
   animation-delay: -20s;
 }
 .blob-3 {
   width: 50vmax; height: 50vmax;
   left: 25vw; bottom: -22vmax;
-  background: radial-gradient(closest-side, rgb(94 92 230 / 0.16), transparent);
+  background: radial-gradient(closest-side, var(--bg-strong), transparent);
+  opacity: 0.25;
   animation-duration: 90s;
   animation-delay: -40s;
 }
@@ -205,5 +211,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .blob { animation: none; }
-  .panel, .panel[data-open], .switch, .switch-knob, .swatch-preview { transition: none; }
+  .backdrop, .panel, .panel[data-open], .switch, .switch-knob, .swatch-preview { transition: none; }
 }

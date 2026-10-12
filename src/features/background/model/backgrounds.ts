@@ -5,13 +5,14 @@ export type Background = {
   label: string
   /** [forte, clara, intermediária]: a forte ocupa um canto, a clara o oposto */
   colors: [string, string, string]
+  progressColor: string
 }
 
 export const BACKGROUNDS: Background[] = [
-  { id: 'azul', label: 'Azul', colors: ['#2f7bff', '#eef5ff', '#a9cfff'] },
-  { id: 'verde', label: 'Verde', colors: ['#25b26a', '#effaf3', '#ade5c3'] },
-  { id: 'laranja', label: 'Laranja', colors: ['#ff7a2f', '#fff4ea', '#ffc89e'] },
-  { id: 'neutro', label: 'Neutro', colors: ['#2c2c2e', '#f5f5f7', '#c7c7cc'] },
+  { id: 'azul', label: 'Azul', colors: ['#2f7bff', '#eef5ff', '#a9cfff'], progressColor: '#409cff' },
+  { id: 'verde', label: 'Verde', colors: ['#25b26a', '#effaf3', '#ade5c3'], progressColor: '#00d46c' },
+  { id: 'laranja', label: 'Laranja', colors: ['#ff7a2f', '#fff4ea', '#ffc89e'], progressColor: '#ff9b45' },
+  { id: 'neutro', label: 'Neutro', colors: ['#2c2c2e', '#f5f5f7', '#c7c7cc'], progressColor: '#e5e5ea' },
 ]
 
 export const backgroundById = (id: BackgroundId) => BACKGROUNDS.find((b) => b.id === id) ?? BACKGROUNDS[0]

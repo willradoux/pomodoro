@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { BackgroundButton, BackgroundPanel, BlobBackdrop, GradientBackground, useBackground } from '../features/background'
 import { ModePicker, SessionControls, TimerFace, UndoToast, usePomodoro } from '../features/timer'
 import { GitHubIcon } from '../shared/ui/icons/GitHubIcon'
@@ -12,13 +13,17 @@ export default function App() {
 
   return (
     <main className="app">
-      <GradientBackground colors={background.colors} animate={background.prefs.animate} fallback={<BlobBackdrop />} />
+      <GradientBackground
+        colors={background.colors}
+        animate={background.prefs.animate}
+        fallback={<BlobBackdrop colors={background.colors} animate={background.prefs.animate} />}
+      />
 
       <h1 className="sr-only">Pomodoro</h1>
 
       <section className="stage">
         <ModePicker value={pomodoro.state.mode} onChange={pomodoro.changeMode} />
-        <div className="card-wrap">
+        <div className="card-wrap" style={{ '--progress-color': background.progressColor } as CSSProperties}>
           <TimerFace ref={pomodoro.ring} state={pomodoro.state} onPrimary={pomodoro.primary} />
         </div>
         <div className="secondary-row">

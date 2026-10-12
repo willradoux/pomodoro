@@ -79,7 +79,7 @@
 .card[data-status='paused'] .digits { opacity: 0.72; }
 .card[data-status='complete'] .digits { opacity: 0.5; }
 
-/* largura fixa por dígito: a Satoshi tem algarismos proporcionais */
+/* Células fixas mantêm o tempo estável durante a animação dos dígitos. */
 .digit {
   position: relative;
   display: inline-block;
@@ -112,10 +112,8 @@
   place-items: center;
   min-height: var(--block);
   border-radius: var(--radius);
-  background: rgb(255 255 255 / 0.05);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.1),
-    -8px 0 24px -10px rgb(0 0 0 / 0.45);
+  background: var(--surface-raised);
+  box-shadow: var(--surface-highlight);
 }
 
 /* celular em pé: número em cima, faixa do play embaixo */
@@ -129,7 +127,6 @@
   .card-info { padding: var(--pad) var(--pad) calc(var(--pad) * 0.6); }
   .play-area {
     height: var(--block);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1), 0 -8px 24px -10px rgb(0 0 0 / 0.45);
   }
 }
 
@@ -145,9 +142,9 @@
   overflow: visible;
   transform: rotate(-90deg) scaleY(-1); /* começa no topo e esvazia no sentido horário */
 }
-.ring circle { fill: none; stroke-width: 3; }
-.ring-track { stroke: rgb(255 255 255 / 0.12); }
-.ring-arc { stroke: var(--on); stroke-linecap: round; }
+.ring circle { fill: none; stroke-width: 8; }
+.ring-track { stroke: #292929; }
+.ring-arc { stroke: var(--progress-color, var(--on)); stroke-linecap: round; }
 
 /* o botão cobre a área inteira: alvo de toque grande */
 .play-hit {

@@ -42,9 +42,12 @@ export function useBackground() {
     setPanelOpen(false)
   }, [])
 
+  const selected = backgroundById(prefs.id)
+
   return {
     prefs,
-    colors: backgroundById(prefs.id).colors,
+    colors: selected.colors,
+    progressColor: selected.progressColor,
     panelOpen,
     openPanel,
     closePanel,

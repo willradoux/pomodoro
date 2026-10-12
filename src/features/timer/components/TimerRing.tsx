@@ -12,7 +12,7 @@ type Props = {
   glideMs: number
 }
 
-const R = 46
+const R = 45
 const C = 2 * Math.PI * R
 
 /**
@@ -31,13 +31,14 @@ export const TimerRing = forwardRef<TimerRingHandle, Props>(function TimerRing({
   })
 
   const f = clamp(fraction, 0, 1)
-  const transition = reduced
-    ? 'none'
-    : glideMs > 0
+  const progressTransition = glideMs > 0
       ? `stroke-dashoffset ${glideMs}ms linear`
       : jump
         ? 'stroke-dashoffset 600ms var(--ease-out)'
-        : 'none'
+        : ''
+  const transition = reduced
+    ? 'none'
+    : ['stroke 400ms var(--ease-out)', progressTransition].filter(Boolean).join(', ')
 
   return (
     <div className="ring" aria-hidden style={scale === 1 ? undefined : { transform: `scale(${scale})` }}>
