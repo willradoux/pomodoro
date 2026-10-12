@@ -57,7 +57,10 @@
   color: var(--on-2);
   transition: background-color 0.15s, color 0.15s;
 }
-.panel-close:hover { background: var(--fill-2); color: var(--on); }
+.panel-close:hover {
+  background: var(--progress-color, var(--fill-2));
+  color: var(--surface);
+}
 
 .panel-row {
   display: flex;

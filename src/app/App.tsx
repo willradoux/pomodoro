@@ -20,7 +20,7 @@ export default function App() {
   const background = useBackground()
 
   return (
-    <main className="app">
+    <main className="app" style={{ '--progress-color': background.progressColor } as CSSProperties}>
       <GradientBackground
         colors={background.colors}
         animate={background.prefs.animate}
@@ -29,7 +29,7 @@ export default function App() {
 
       <h1 className="sr-only">Pomodoro</h1>
 
-      <section className="stage" style={{ '--progress-color': background.progressColor } as CSSProperties}>
+      <section className="stage">
         <ModePicker value={pomodoro.state.mode} onChange={pomodoro.changeMode} />
         <div className="card-wrap">
           <TimerFace ref={pomodoro.ring} state={pomodoro.state} onPrimary={pomodoro.primary} />
