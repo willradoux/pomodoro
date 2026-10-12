@@ -1,6 +1,14 @@
 import type { CSSProperties } from 'react'
 import { BackgroundButton, BackgroundPanel, BlobBackdrop, GradientBackground, useBackground } from '../features/background'
-import { ModePicker, SessionControls, TimerFace, UndoToast, usePomodoro } from '../features/timer'
+import {
+  DurationButton,
+  DurationPanel,
+  ModePicker,
+  SessionControls,
+  TimerFace,
+  UndoToast,
+  usePomodoro,
+} from '../features/timer'
 import { GitHubIcon } from '../shared/ui/icons/GitHubIcon'
 import { IconLink } from '../shared/ui/IconLink'
 import './app.css'
@@ -33,6 +41,11 @@ export default function App() {
             soundOn={pomodoro.soundOn}
             onToggleSound={pomodoro.toggleSound}
           />
+          <DurationButton
+            anchor={pomodoro.durationsPanel.anchor}
+            expanded={pomodoro.durationsPanel.open}
+            onOpen={pomodoro.durationsPanel.openPanel}
+          />
           <BackgroundButton anchor={background.anchor} expanded={background.panelOpen} onOpen={background.openPanel} />
         </div>
       </section>
@@ -42,6 +55,14 @@ export default function App() {
       </IconLink>
 
       <UndoToast toast={pomodoro.toast} onUndo={pomodoro.undo} onDismiss={pomodoro.dismissToast} />
+
+      <DurationPanel
+        open={pomodoro.durationsPanel.open}
+        onClose={pomodoro.durationsPanel.closePanel}
+        durations={pomodoro.state.durations}
+        onChange={pomodoro.changeDuration}
+        anchor={pomodoro.durationsPanel.anchor}
+      />
 
       <BackgroundPanel
         open={background.panelOpen}

@@ -5,7 +5,7 @@ import { springs } from '../../../shared/lib/spring'
 import { PlayPauseIcon } from '../../../shared/ui/icons/PlayPauseIcon'
 import { PressButton } from '../../../shared/ui/PressButton'
 import { useCountdown } from '../hooks/useCountdown'
-import { durationOf, formatTime, MODES, primaryLabel, statusText, type TimerState } from '../model/timer'
+import { formatTime, MODES, primaryLabel, statusText, type TimerState } from '../model/timer'
 import { Digits } from './Digits'
 import { TimerRing, type TimerRingHandle } from './TimerRing'
 
@@ -44,7 +44,7 @@ export const TimerFace = memo(
         <div className="play-area">
           <TimerRing
             ref={ref}
-            fraction={(running ? nextMs : ms) / durationOf(state.mode)}
+            fraction={(running ? nextMs : ms) / state.total}
             glideMs={running ? stepMs : 0}
           />
           <PressButton className="play-hit" depth={0.96} aria-label={primaryLabel(state)} onClick={onPrimary} {...hover}>

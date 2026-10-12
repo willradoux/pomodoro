@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { usePanel } from '../../../shared/hooks/usePanel'
 import { useStored } from '../../../shared/hooks/useStored'
 import { sounds } from '../../../shared/lib/sounds'
 import type { TimerRingHandle } from '../components/TimerRing'
 import type { Toast } from '../components/UndoToast'
-import { primaryAction, reset, selectMode, undoSnapshot, type Mode, type TimerState } from '../model/timer'
+import { primaryAction, reset, selectMode, setDuration, undoSnapshot, type Mode, type TimerState } from '../model/timer'
 import { setFavicon } from '../favicon'
 import { askNotificationPermission, notify } from '../notifications'
 import { useAlarm } from './useAlarm'
@@ -25,6 +26,7 @@ export function usePomodoro() {
   const [toast, setToast] = useState<UndoToast | null>(null)
   const toastRef = useRef(toast)
   toastRef.current = toast
+  const durationsPanel = usePanel()
 
   useEffect(() => {
     sounds.muted = !soundOn
@@ -93,6 +95,14 @@ export function usePomodoro() {
 
   const dismissToast = useCallback(() => setToast(null), [])
 
+  const changeDuration = useCallback(
+    (mode: Mode, minutes: number) => {
+      sounds.select()
+      run((s) => setDuration(s, mode, minutes))
+    },
+    [run],
+  )
+
   const toggleSound = useCallback(() => {
     if (soundOn) {
       stopAlarm()
@@ -117,5 +127,18 @@ export function usePomodoro() {
     return () => window.removeEventListener('keydown', onKey)
   }, [primary, ringing, stopAlarm])
 
-  return { state, ring, soundOn, toast, primary, resetSession, changeMode, undo, dismissToast, toggleSound }
+  return {
+    state,
+    ring,
+    soundOn,
+    toast,
+    durationsPanel,
+    primary,
+    resetSession,
+    changeMode,
+    changeDuration,
+    undo,
+    dismissToast,
+    toggleSound,
+  }
 }

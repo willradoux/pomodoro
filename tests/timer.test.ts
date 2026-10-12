@@ -15,6 +15,7 @@ import {
   restore,
   selectMode,
   serialize,
+  setDuration,
   sessionNumber,
   settle,
   start,
@@ -26,10 +27,13 @@ import {
 
 const T0 = 1_700_000_000_000
 
+/** Duração padrão de um modo, em ms. */
+const D = (mode: 'focus' | 'short' | 'long') => durationOf(createState(), mode)
+
 /** Roda uma sessão de foco inteira e conclui. */
 function finishFocus(s: TimerState, now: number) {
   const running = start(s, now)
-  return settle(running, now + durationOf('focus')).state
+  return settle(running, now + D('focus')).state
 }
 
 test('iniciar, pausar e retomar usam timestamps sem perder precisão', () => {
@@ -49,17 +53,17 @@ test('conclusão acontece uma única vez e só conta sessões de foco', () => {
   const running = start(createState(), T0)
   assert.equal(settle(running, T0 + 1000).finished, false)
 
-  const first = settle(running, T0 + durationOf('focus'))
+  const first = settle(running, T0 + D('focus'))
   assert.equal(first.finished, true)
   assert.equal(first.state.status, 'complete')
   assert.equal(first.state.completed, 1)
 
   // idempotente: nada de conclusão (nem alarme) duplicada
-  const again = settle(first.state, T0 + durationOf('focus') + 5000)
+  const again = settle(first.state, T0 + D('focus') + 5000)
   assert.equal(again.finished, false)
   assert.equal(again.state.completed, 1)
 
-  const brk = settle(start(createState('short', 1), T0), T0 + durationOf('short')).state
+  const brk = settle(start(createState('short', 1), T0), T0 + D('short')).state
   assert.equal(brk.completed, 1)
 })
 
@@ -71,7 +75,7 @@ test('pausa longa a cada quatro focos, e a próxima etapa nunca começa sozinha'
     assert.equal(s.status, 'complete', 'para em "concluído" esperando ação')
     seen.push(nextMode(s))
     s = startNext(s, T0) // inicia a pausa
-    s = settle(s, T0 + durationOf(s.mode)).state
+    s = settle(s, T0 + durationOf(s)).state
     s = startNext(s, T0) // volta ao foco
     s = pause(s, T0)
     s = reset(s)
@@ -97,14 +101,14 @@ test('clicar no modo atual não reinicia sessão em andamento ou pausada', () =>
   const switched = selectMode(paused, 'short')
   assert.equal(switched.mode, 'short')
   assert.equal(switched.status, 'idle')
-  assert.equal(switched.remaining, durationOf('short'))
+  assert.equal(switched.remaining, D('short'))
 })
 
 test('reiniciar preserva o progresso do ciclo', () => {
   const s = reset(pause(start(createState('focus', 3), T0), T0 + 1000))
   assert.equal(s.completed, 3)
   assert.equal(s.status, 'idle')
-  assert.equal(s.remaining, durationOf('focus'))
+  assert.equal(s.remaining, D('focus'))
 })
 
 test('hasProgress e undoSnapshot protegem só o que tem progresso', () => {
@@ -131,7 +135,7 @@ test('ação principal: iniciar → pausar → retomar → próxima etapa', () =
   assert.equal(s.status, 'paused')
   s = primaryAction(s, T0 + 2000)
   assert.equal(s.status, 'running')
-  s = settle(s, T0 + 2 * durationOf('focus')).state
+  s = settle(s, T0 + 2 * D('focus')).state
   assert.equal(primaryLabel(s), 'Iniciar pausa')
   s = primaryAction(s, T0)
   assert.equal(s.mode, 'short')
@@ -179,7 +183,7 @@ test('persistência: sessão pausada volta pausada com o mesmo tempo', () => {
 
 test('persistência: sessão expirada conclui uma vez, em silêncio, sem duplicar', () => {
   const running = start(createState('focus', 0), T0)
-  const later = T0 + 2 * durationOf('focus')
+  const later = T0 + 2 * D('focus')
 
   const first = restore(serialize(running), later)
   assert.equal(first.finishedWhileAway, true)
@@ -197,7 +201,7 @@ test('persistência: salvar e restaurar devolve exatamente o mesmo estado (sem e
     createState(),
     start(createState('short', 2), T0),
     pause(start(createState('long', 4), T0), T0 + 30_000),
-    settle(start(createState(), T0), T0 + durationOf('focus')).state,
+    settle(start(createState(), T0), T0 + D('focus')).state,
   ]
   for (const s of states) {
     const raw = serialize(s)
@@ -215,5 +219,53 @@ test('persistência: dados inválidos ou corrompidos viram estado novo', () => {
 test('persistência: relógio adiantado não gera sessão maior que a duração', () => {
   const tampered = { ...start(createState(), T0), endAt: T0 + 10 * 60 * MINUTE }
   const { state } = restore(JSON.stringify(tampered), T0)
-  assert.equal(remainingAt(state, T0), durationOf('focus'))
+  assert.equal(remainingAt(state, T0), D('focus'))
+})
+
+test('tempos personalizados: foco de 50 min vale para o timer, a persistência e o ciclo', () => {
+  let s = setDuration(createState(), 'focus', 50)
+  assert.equal(s.durations.focus, 50)
+  assert.equal(s.remaining, 50 * MINUTE, 'parado no foco: o tempo exibido acompanha')
+
+  s = start(s, T0)
+  assert.equal(remainingAt(s, T0 + MINUTE), 49 * MINUTE)
+
+  // a troca de modo e o reinício respeitam as durações escolhidas
+  assert.equal(selectMode(s, 'short').remaining, 5 * MINUTE)
+  assert.equal(reset(setDuration(createState('short'), 'short', 10)).remaining, 10 * MINUTE)
+
+  const done = settle(s, T0 + 50 * MINUTE).state
+  const brk = startNext(setDuration(done, 'short', 8), T0)
+  assert.equal(remainingAt(brk, T0), 8 * MINUTE)
+
+  const { state } = restore(serialize(brk), T0 + 1000)
+  assert.deepEqual(state.durations, { focus: 50, short: 8, long: 15 })
+})
+
+test('tempos personalizados: sessão em andamento não é cortada', () => {
+  const running = start(createState(), T0)
+  const changed = setDuration(running, 'focus', 50)
+  assert.equal(changed.endAt, running.endAt)
+  assert.equal(changed.durations.focus, 50)
+  assert.equal(reset(changed).remaining, 50 * MINUTE, 'a próxima sessão já usa o novo tempo')
+  // o anel continua medindo a sessão atual de 25 min, não os 50 novos
+  assert.equal(changed.total, 25 * MINUTE)
+  const { state } = restore(serialize(pause(changed, T0 + MINUTE)), T0 + 2 * MINUTE)
+  assert.equal(state.total, 25 * MINUTE)
+  assert.equal(state.durations.focus, 50)
+})
+
+test('tempos personalizados: limites e valores inválidos', () => {
+  assert.equal(setDuration(createState(), 'focus', 500).durations.focus, 120)
+  assert.equal(setDuration(createState(), 'short', 0).durations.short, 1)
+  const same = createState()
+  assert.equal(setDuration(same, 'focus', 25), same, 'mesmo valor não cria estado novo')
+
+  // salvo sem durações (versão antiga) ou com valores inválidos: volta ao padrão sem perder a sessão
+  const legacy = JSON.stringify({ mode: 'focus', status: 'paused', endAt: null, remaining: 60_000, completed: 2 })
+  const { state } = restore(legacy, T0)
+  assert.equal(state.status, 'paused')
+  assert.deepEqual(state.durations, { focus: 25, short: 5, long: 15 })
+  const weird = JSON.stringify({ ...createState(), durations: { focus: 999, short: 'x', long: 30 } })
+  assert.deepEqual(restore(weird, T0).state.durations, { focus: 25, short: 5, long: 30 })
 })

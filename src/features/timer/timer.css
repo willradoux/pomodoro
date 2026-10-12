@@ -163,6 +163,47 @@
   height: clamp(36px, calc(var(--ring) * 0.44), 64px);
 }
 
+/* ---------- painel de tempos ---------- */
+
+.durations {
+  display: grid;
+  gap: 8px;
+}
+.duration-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--surface-raised);
+}
+.stepper-btn {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--on);
+  transition: background-color 0.15s, color 0.15s;
+}
+.stepper-btn:hover:not(:disabled) { background: var(--fill-2); }
+.stepper-btn:disabled { color: var(--on-3); cursor: default; }
+.stepper-value {
+  min-width: 64px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
 /* ---------- aviso com desfazer ---------- */
 
 .toast-region {
