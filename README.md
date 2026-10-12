@@ -1,6 +1,6 @@
 # Pomodoro
 
-Timer Pomodoro minimalista com visual inspirado na Apple: vidro escuro, fundo em degradê fluido animado em WebGL, microinterações com física de mola e sons sintetizados em tempo real.
+Timer Pomodoro minimalista com visual inspirado na Apple: cards escuros, fundo em degradê fluido animado em WebGL, microinterações com física de mola e sons sintetizados em tempo real.
 
 ![React](https://img.shields.io/badge/React-18-61dafb?logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white)
@@ -11,7 +11,8 @@ Timer Pomodoro minimalista com visual inspirado na Apple: vidro escuro, fundo em
 
 ## Funcionalidades
 
-- **Ciclo Pomodoro completo**: 25 min de foco, 5 min de pausa e pausa longa de 15 min a cada 4 sessões. A próxima etapa nunca começa sozinha.
+- **Ciclo Pomodoro completo**: foco e pausa, com pausa longa automática a cada 4 sessões. Durante a pausa longa, o seletor mostra "Pausa longa". A próxima etapa nunca começa sozinha.
+- **Tempos configuráveis**: foco (5 a 120 min), pausa (1 a 30 min) e pausa longa (5 a 60 min) ajustáveis no painel de tempos. Com o timer parado, o novo tempo aparece na hora; uma sessão em andamento termina com a duração original.
 - **Tempo preciso**: a contagem é baseada em timestamps, então não atrasa com a aba em segundo plano nem com o computador suspenso.
 - **Sessão persistente**: ao recarregar a página, a sessão continua de onde parou. Se terminou com a página fechada, aparece como concluída, sem tocar o alarme de novo.
 - **Sincronização entre abas**: duas abas abertas mostram a mesma sessão.
@@ -21,6 +22,8 @@ Timer Pomodoro minimalista com visual inspirado na Apple: vidro escuro, fundo em
 - **Sons em todas as interações**, sintetizados com Web Audio (sem nenhum arquivo de áudio), com botão para silenciar.
 - **Ícone da aba dinâmico**: mostra play ou pause conforme o estado, junto com o tempo restante no título.
 - **Atalho**: `Espaço` inicia e pausa.
+
+![Painel de tempos](docs/durations.jpg)
 
 ![Painel de fundos](docs/backgrounds.jpg)
 
@@ -35,7 +38,7 @@ Ao mudar de domínio, atualize o endereço canônico, `og:url`, `og:image` e `tw
 - **React 18** + **TypeScript**, com **Vite** como bundler.
 - **WebGL** puro para o fundo animado (um fragment shader próprio, sem three.js).
 - **Web Audio API** para todos os sons.
-- **CSS** com container queries, `backdrop-filter` e tokens de design em variáveis CSS.
+- **CSS** com container queries e tokens de design em variáveis CSS.
 - Nenhuma biblioteca de UI, animação ou estado: a física de mola, os componentes e os hooks são do próprio projeto. A única dependência de runtime é o React.
 
 ## Como rodar
@@ -66,10 +69,11 @@ src/
 ├── app/                         composição da tela e layout da página
 ├── features/
 │   ├── timer/
-│   │   ├── model/timer.ts       lógica pura: estados, transições, persistência e desfazer
+│   │   ├── model/timer.ts       lógica pura: estados, transições, tempos, persistência e desfazer
 │   │   ├── hooks/               useTimer, usePomodoro, useCountdown, useAlarm
-│   │   ├── components/          TimerFace, TimerRing, Digits, ModePicker, SessionControls, UndoToast
-│   │   ├── favicon.ts         ícone da aba (play/pause)
+│   │   ├── components/          TimerFace, TimerRing, Digits, ModePicker, SessionControls,
+│   │   │                        DurationButton, DurationPanel, UndoToast
+│   │   ├── favicon.ts           ícone da aba (play/pause)
 │   │   ├── notifications.ts
 │   │   ├── timer.css
 │   │   └── index.ts
@@ -83,8 +87,8 @@ src/
 │       └── index.ts
 └── shared/
     ├── lib/                     spring (física de mola), sounds (Web Audio), keyboard
-    ├── hooks/                   useSpring, usePress, useHover, useReducedMotion, useStored
-    ├── ui/                      PressButton, IconButton, ícones animados
+    ├── hooks/                   useSpring, usePress, useHover, usePanel, useReducedMotion, useStored
+    ├── ui/                      PressButton, IconButton, IconLink, Popover (painéis), ícones animados
     └── styles/                  tokens.css e base.css
 tests/
 └── timer.test.ts
@@ -99,6 +103,7 @@ Toda a regra do Pomodoro fica em `features/timer/model/timer.ts`, sem React nem 
 - A conclusão (`settle`) é **idempotente**: uma sessão só conclui uma vez, então o alarme e a contagem de ciclos nunca duplicam.
 - `serialize` e `restore` são inversos exatos para estados válidos. Assim, abas sincronizadas não ficam reescrevendo o storage uma da outra.
 - O "Desfazer" guarda o snapshot certo: trocar de modo várias vezes seguidas ainda recupera a sessão original.
+- Os tempos escolhidos fazem parte do estado, e cada sessão guarda a própria duração (`total`). Assim, mudar as preferências não altera uma sessão já iniciada nem o progresso do anel.
 
 ### Renderização enxuta
 
@@ -133,4 +138,4 @@ Toda a regra do Pomodoro fica em `features/timer/model/timer.ts`, sem React nem 
 npm test
 ```
 
-Os testes cobrem a lógica do timer: precisão por timestamps, conclusão única, pausa longa a cada quatro focos, proteção contra reinícios acidentais, desfazer e persistência (recuperação, sessão expirada, dados corrompidos e relógio adiantado).
+Os testes cobrem a lógica do timer: precisão por timestamps, conclusão única, pausa longa a cada quatro focos, tempos personalizados, proteção contra reinícios acidentais, desfazer e persistência (recuperação, sessão expirada, dados corrompidos e relógio adiantado).
